@@ -23,7 +23,7 @@ export class TableService {
         return sort.dir === DESC ? bField.localeCompare(aField) : aField.localeCompare(bField);
       }
 
-      return sort.dir === DESC ? aField - bField : bField - aField;
+      return sort.dir === DESC ? bField - aField : aField - bField;
     });
   }
 }

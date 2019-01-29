@@ -19,8 +19,8 @@ export class AppComponent implements OnInit {
       body: 'Body'
     },
     sort: {
-      field: 'title',
-      dir: 'desc'
+      field: 'id',
+      dir: 'asc'
     }
   };
 

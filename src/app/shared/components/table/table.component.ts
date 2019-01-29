@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { TableSettings, TableSort } from './table.models';
 import { TableService } from './table.service';
 
@@ -11,9 +13,13 @@ const ASC = 'asc';
   styleUrls: ['./table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TableComponent implements OnInit {
-  items: any[];
-  fields: string[];
+export class TableComponent implements OnInit, OnDestroy {
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  private search$: BehaviorSubject<any> = new BehaviorSubject('');
+
+  items: any[] = [];
+  origItems: any[] = [];
+  fields: string[] = [];
   sort: TableSort;
 
   @Input() settings: TableSettings;
@@ -23,15 +29,23 @@ export class TableComponent implements OnInit {
     }
 
     this.sort = {...this.settings.sort};
-    this.items = this.service.sortItems(data, this.sort);
+    this.origItems = this.service.sortItems(data, this.sort);
     this.fields = Object.keys(data[0]);
   }
 
   constructor(
-    private service: TableService
+    private service: TableService,
+    private cd: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.searchPosts();
+  }
+
+  ngOnDestroy(): void {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
 
   changeSort(event: MouseEvent, field: string): void {
     event.preventDefault();
@@ -54,6 +68,28 @@ export class TableComponent implements OnInit {
 
   trackByCells(index: number, field: string): string {
     return field;
+  }
+
+  onKeyUp(event: KeyboardEvent): void {
+    const text = (<HTMLInputElement>event.target).value;
+    this.search$.next(text);
+  }
+
+  private searchPosts(): void {
+    this.search$
+      .pipe(
+        takeUntil(this.ngUnsubscribe),
+        distinctUntilChanged(),
+        debounceTime(300)
+      )
+      .subscribe((searchText: string) => {
+        if (!searchText) {
+          this.items = this.origItems;
+        }
+
+        this.items = this.origItems.filter(({title}) => title.indexOf(searchText) !== -1);
+        this.cd.detectChanges();
+      });
   }
 }
 
