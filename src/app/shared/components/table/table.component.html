@@ -1,0 +1,24 @@
+<table class="table table-bordered table-striped">
+	<thead>
+		<tr>
+			<th *ngFor="let field of fields; trackBy: trackByTitles">
+				<a href="#" (click)="changeSort($event, field)" class="sort-btn">
+					{{settings.labels[field]}}
+					<span [ngClass]="{
+					        'arrow': field === sort.field,
+					        'arrow-down': sort.dir === 'desc',
+					        'arrow-up': sort.dir === 'asc'
+					      }"
+					></span>
+				</a>
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr *ngFor="let item of items; trackBy: trackByRows">
+			<td *ngFor="let field of fields; trackBy: trackByCells">
+				{{item[field]}}
+			</td>
+		</tr>
+	</tbody>
+</table>

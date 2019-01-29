@@ -1,20 +1,17 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableComponent } from './components/table.component';
-
-const COMPONENTS = [
-  TableComponent
-];
+import { TableModule } from './components/table/table.module';
 
 @NgModule({
-  declarations: [
-    ...COMPONENTS
+  imports: [
+    CommonModule,
+    TableModule
   ],
   exports: [
-    ...COMPONENTS
+    TableModule
   ],
-  imports: [
-    CommonModule
+  declarations: [
+
   ]
 })
 export class SharedModule { }
