@@ -1,34 +1,8 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from './core/api.service';
-import { Post } from './models';
-import { TableSettings } from './shared/components/table/table.models';
+import { Component} from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './app.component.html'
 })
-export class AppComponent implements OnInit {
-  posts$: Observable<Post[]>;
-  settings: TableSettings = {
-    labels: {
-      userId: 'User ID',
-      id: 'ID',
-      title: 'Title',
-      body: 'Body'
-    },
-    sort: {
-      field: 'id',
-      dir: 'asc'
-    }
-  };
-
-  constructor(
-    private apiService: ApiService
-  ) {}
-
-  ngOnInit(): void {
-    this.posts$ = this.apiService.getPosts();
-  }
+export class AppComponent {
 }

@@ -1,0 +1,13 @@
+<h5 class="text-danger text-center" *ngIf="(error$ | async); else content">An error has occurred...</h5>
+
+<ng-template #content>
+	<ng-container *ngIf="isLoading$ | async; else table">
+		<h5 class="text-center text-info">Loading...</h5>
+	</ng-container>
+
+	<ng-template #table>
+		<app-table [data]="posts$ | async" [settings]="settings"></app-table>
+	</ng-template>
+</ng-template>
+
+
